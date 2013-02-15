@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'methadone'
+require 'estimator'
+
+class App
+  include Methadone::Main
+  include Methadone::CLILogging
+
+  main do |value, time|
+    fm = Estimator::Estimate.new( options[:file] )
+    fm.load
+
+    if value.nil?
+      if options[:'last-estimate']
+        puts fm.last_estimate
+      else
+        puts fm.estimate
+      end
+    else
+      time = fm.add_value( value, time )
+      puts "added #{value} on #{time}"
+    end
+
+    fm.save!
+  end
+
+  description "Estimate remaining time based on previous values"
+  on      '--file NAME',  'Database file name'
+  on  '--last-estimate',  'Show last estimate (saved on database)'
+  arg :value, :optional,  'Value to estimate'
+  arg  :time, :optional,  'When the value happened'
+
+  version Estimator::VERSION
+  use_log_level_option
+  go!
+end
