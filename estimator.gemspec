@@ -17,8 +17,8 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.add_dependency('methadone', '~> 1.2.4')
+  gem.add_dependency('methadone')
 
-  gem.add_development_dependency('rake', '~> 0.9.2')
+  gem.add_development_dependency('rake')
   gem.add_development_dependency('aruba')
 end
