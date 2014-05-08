@@ -1,38 +1,42 @@
 #!/usr/bin/env ruby
-
 require 'optparse'
 require 'methadone'
 require 'estimator'
 
 class App
-  include Methadone::Main
-  include Methadone::CLILogging
+    include Methadone::Main
+    include Methadone::CLILogging
 
-  main do |value, time|
-    fm = Estimator::Estimate.new( options[:file] )
-    fm.load
+    main do |value, time|
+        estimator_db_name = options.fetch( :file, 'estimator_db.yml' )
+        estimator_db_path = "#{Dir.pwd}/#{estimator_db_name}"
+        debug "creating estimator with db [#{estimator_db_path}]"
 
-    if value.nil?
-      if options[:'last-estimate']
-        puts fm.last_estimate
-      else
-        puts fm.estimate
-      end
-    else
-      time = fm.add_value( value, time )
-      puts "added #{value} on #{time}"
+        fm = Estimator::Estimate.new( estimator_db_path )
+        # TODO: check for exception
+        fm.load
+
+        unless value.nil?
+            time = fm.add_value( value, time )
+            info "added #{value} on #{time}"
+        else
+            if options[:'last-estimate']
+                info fm.last_estimate
+            else
+                info fm.estimate
+            end
+        end
+
+        fm.save!
     end
 
-    fm.save!
-  end
+    description 'Estimate remaining time based on previous values'
+    on      '--file NAME',  'Database file name'
+    on  '--last-estimate',  'Show last estimate (saved on database)'
+    arg :value, :optional,  'Value to estimate'
+    arg  :time, :optional,  'When the value happened'
 
-  description "Estimate remaining time based on previous values"
-  on      '--file NAME',  'Database file name'
-  on  '--last-estimate',  'Show last estimate (saved on database)'
-  arg :value, :optional,  'Value to estimate'
-  arg  :time, :optional,  'When the value happened'
-
-  version Estimator::VERSION
-  use_log_level_option
-  go!
+    version Estimator::VERSION
+    use_log_level_option
+    go!
 end
