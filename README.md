@@ -1,5 +1,8 @@
 # Estimator
 
+[![Gem Version](https://badge.fury.io/rb/estimator.svg)](http://badge.fury.io/rb/estimator)
+[![Code Climate](https://codeclimate.com/github/mtrovilho/estimator.png)](https://codeclimate.com/github/mtrovilho/estimator)
+
 Estimate remaining time based on previous values.
 
 
