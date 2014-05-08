@@ -17,7 +17,7 @@ class App
         fm.load
 
         unless value.nil?
-            time = fm.add_value( value, time )
+            time = fm.add_value( value.to_f, time )
             info "added #{value} on #{time}"
         else
             if options[:'last-estimate']
